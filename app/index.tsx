@@ -1,35 +1,21 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Redirect } from 'expo-router';
+import { ActivityIndicator, View } from 'react-native';
+import { useAuth } from '../src/context/AuthContext';
 
-export default function Page() {
-  let nome = "Kayke";
-  return (
-    <View style={styles.container}>
-      <View style={styles.main}>
-        <Text style={styles.title}>Hello World {nome}</Text>
-        <Text style={styles.subtitle}>This is the first page of your app.</Text>
+export default function Index() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center' }}>
+        <ActivityIndicator size="large" />
       </View>
-    </View>
-  );
-}
+    );
+  }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    padding: 24,
-  },
-  main: {
-    flex: 1,
-    justifyContent: "center",
-    maxWidth: 960,
-    marginHorizontal: "auto",
-  },
-  title: {
-    fontSize: 64,
-    fontWeight: "bold",
-  },
-  subtitle: {
-    fontSize: 36,
-    color: "#38434D",
-  },
-});
+  if (user) {
+    return <Redirect href="/home" />;
+  }
+
+  return <Redirect href="/login" />;
+}
