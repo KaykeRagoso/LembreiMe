@@ -1,8 +1,9 @@
 import { router } from 'expo-router';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { useState } from 'react';
-import { Alert, Button, Pressable, Text, TextInput, View } from 'react-native';
+import { Alert, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { auth } from '../src/services/firebase';
+import { authStyles as styles } from '../src/styles/styles';
 
 export default function Register() {
   const [email, setEmail] = useState('');
@@ -24,33 +25,38 @@ export default function Register() {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', padding: 20 }}>
-      <Text style={{ fontSize: 24, marginBottom: 16 }}>Cadastro</Text>
+    <View style={styles.container}>
+        <View style={styles.card}>
+            <Text style={styles.logo}>Cadastre-Se</Text>
 
-      <TextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        style={{ borderWidth: 1, marginBottom: 12, padding: 8 }}
-      />
+            <TextInput
+                placeholder="Email"
+                value={email}
+                onChangeText={setEmail}
+                placeholderTextColor="#9CA3AF"
+                autoCapitalize="none"
+                style={styles.input}
+            />
 
-      <TextInput
-        placeholder="Senha"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        style={{ borderWidth: 1, marginBottom: 12, padding: 8 }}
-      />
+            <TextInput
+                placeholder="Senha"
+                value={password}
+                onChangeText={setPassword}
+                placeholderTextColor="#9CA3AF"
+                secureTextEntry
+                style={styles.input}
+            />
 
-      <Button title="Cadastrar" onPress={handleRegister} />
+            <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>REGISTRAR</Text>
+            </TouchableOpacity>
 
-    <Pressable onPress={() => router.push('/login')}>
-        <Text style={{ display: 'flex', justifyContent: 'center', alignContent: 'center', marginTop: 16, color: '#1e90ff' }}>
-            Não tem conta? Criar agora
-        </Text>
-    </Pressable>
-    
+            <TouchableOpacity>
+            <Text style={styles.link}>
+                Já tem conta? <Text style={styles.linkBold} onPress={() => router.push('/login')}>Logar agora</Text>
+            </Text>
+            </TouchableOpacity>
+        </View>
     </View>
   );
 }
