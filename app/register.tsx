@@ -47,7 +47,10 @@ export default function Register() {
                 style={styles.input}
             />
 
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity 
+              style={styles.button}
+              onPress={handleRegister}
+            >
             <Text style={styles.buttonText}>REGISTRAR</Text>
             </TouchableOpacity>
 
