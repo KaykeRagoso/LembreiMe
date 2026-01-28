@@ -1,11 +1,13 @@
 import {
     createUserWithEmailAndPassword,
+    deleteUser,
     sendPasswordResetEmail,
     signInWithEmailAndPassword,
     signOut,
     updateProfile,
 } from 'firebase/auth';
-import { auth } from './firebase';
+import { deleteDoc, doc } from 'firebase/firestore';
+import { auth, db } from './firebase';
 
 export const authService = {
   // Cadastro
@@ -30,10 +32,27 @@ export const authService = {
     await sendPasswordResetEmail(auth, email);
   },
 
-  // Atualizar perfil (nome)
-  async updateUserProfile(displayName: string) {
+  // Atualizar perfil (nome e foto)
+  async updateUserProfile(displayName: string, photoURL?: string) {
     if (auth.currentUser) {
-      await updateProfile(auth.currentUser, { displayName });
+      const updateData: { displayName: string; photoURL?: string } = { displayName };
+      if (photoURL) updateData.photoURL = photoURL;
+      await updateProfile(auth.currentUser, updateData);
+    }
+  },
+
+  // Exclusão de conta
+  async deleteAccount() {
+    const user = auth.currentUser;
+    if (user) {
+      // Deletar dados do Firestore (se houver)
+      try {
+        await deleteDoc(doc(db, 'users', user.uid));
+      } catch (error) {
+        console.error('Erro ao deletar dados do Firestore:', error);
+      }
+      // Deletar usuário do Firebase Auth
+      await deleteUser(user);
     }
   },
 

@@ -3,7 +3,7 @@ import { ActivityIndicator, View } from 'react-native';
 import { useAuth } from '../src/context/AuthContext';
 
 export default function Index() {
-  const { user, loading } = useAuth();
+  const { user, loading, needsOnboarding } = useAuth();
 
   if (loading) {
     return (
@@ -13,9 +13,16 @@ export default function Index() {
     );
   }
 
-  if (user) {
-    return <Redirect href="/home" />;
+  // Se usuário logado e precisa fazer onboarding
+  if (user && needsOnboarding) {
+    return <Redirect href="./onboarding" />;
   }
 
-  return <Redirect href="/login" />;
+  // Se usuário logado e já fez onboarding
+  if (user) {
+    return <Redirect href="./home" />;
+  }
+
+  // Se não logado, vai para login
+  return <Redirect href="./login" />;
 }

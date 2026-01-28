@@ -18,7 +18,7 @@ export default function Register() {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       Alert.alert('Sucesso', 'Conta criada com sucesso!');
-      router.replace('/login');
+      router.replace('./login');
     } catch (error: any) {
       Alert.alert('Erro', error.message);
     }

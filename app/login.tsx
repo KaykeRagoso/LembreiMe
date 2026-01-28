@@ -20,7 +20,7 @@ export default function Login() {
       setLoading(true);
       await signInWithEmailAndPassword(auth, email, password);
       Alert.alert('Sucesso', 'Login realizado com sucesso!');
-      router.replace('/home');
+      router.replace('./home');
     } catch (error: any) {
       Alert.alert('Erro', error.message);
     } finally {

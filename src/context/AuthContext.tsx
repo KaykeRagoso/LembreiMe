@@ -6,29 +6,28 @@ import { auth } from '../services/firebase';
 interface AuthContextData {
   user: User | null;
   loading: boolean;
+  needsOnboarding: boolean;
 }
 
 const AuthContext = createContext<AuthContextData>({
   user: null,
   loading: true,
+  needsOnboarding: false,
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [needsOnboarding, setNeedsOnboarding] = useState(false);
 
   useEffect(() => {
-    // Restaurar sessão persistente
+    // Restaurar sessão persistente e verificar onboarding
     const restoreSession = async () => {
       try {
-        const savedUser = await AsyncStorage.getItem('user');
-        if (savedUser) {
-          setUser(JSON.parse(savedUser));
-        }
+        const onboardingCompleted = await AsyncStorage.getItem('onboardingCompleted');
+        setNeedsOnboarding(!onboardingCompleted);
       } catch (error) {
-        console.error('Erro ao restaurar sessão:', error);
-      } finally {
-        setLoading(false);
+        console.error('Erro ao restaurar onboarding:', error);
       }
     };
 
@@ -58,7 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading }}>
+    <AuthContext.Provider value={{ user, loading, needsOnboarding }}>
       {children}
     </AuthContext.Provider>
   );
