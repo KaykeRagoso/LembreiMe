@@ -1,168 +1,147 @@
-// App.js
-import { MaterialIcons } from '@expo/vector-icons';
-import React, { useState } from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from 'react-native';
+import { router } from 'expo-router';
+import { signOut } from 'firebase/auth';
+import { useEffect, useState } from 'react';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import TaskCard from '../src/components/TaskCard';
+import { auth } from '../src/services/firebase';
 
-export default function App() {
-  const [tasks, setTasks] = useState([
-    { id: 1, text: 'Reunião com equipe', completed: true },
-    { id: 2, text: 'Enviar relatório', completed: false },
-    { id: 3, text: 'Comprar presentes', completed: false },
-    { id: 4, text: 'Academia às 18:00', completed: false },
-  ]);
+interface Task {
+  id: string;
+  title: string;
+  description?: string;
+  date?: string;
+  priority?: 'low' | 'medium' | 'high';
+  done?: boolean;
+}
 
-  const toggleTask = (id: number) => {
-    setTasks(tasks.map(task => 
-      task.id === id ? { ...task, completed: !task.completed } : task
-    ));
+export default function Home() {
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  useEffect(() => {
+    setTasks([
+      {
+        id: '1',
+        title: 'Estudar Firestore',
+        description: 'Criar collections e regras',
+        date: 'Hoje',
+        priority: 'high',
+        done: false,
+      },
+      {
+        id: '2',
+        title: 'Ajustar layout',
+        description: 'Deixar tudo clean e redondo',
+        date: 'Amanhã',
+        priority: 'medium',
+        done: true,
+      },
+    ]);
+  }, []);
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    router.replace('/login');
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
-      
-      {/* Header */}
+    <View style={styles.container}>
+      {/* HEADER */}
       <View style={styles.header}>
-        <Text style={styles.time}>3:41</Text>
-        <Text style={styles.title}>Minhas Tarefas</Text>
+        <View>
+          <Text style={styles.greeting}>Olá {auth.currentUser?.displayName || 'usuário'}</Text>
+          <Text style={styles.date}>
+            {new Date().toLocaleDateString('pt-BR', {
+              weekday: 'long',
+              day: '2-digit',
+              month: 'long',
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
+          </Text>
+        </View>
+
+        <TouchableOpacity onPress={handleLogout}>
+          <Text style={styles.logout}>Sair</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Lista de Tarefas */}
-      <View style={styles.tasksSection}>
-        <ScrollView style={styles.tasksList}>
-          {tasks.map((task) => (
-            <View key={task.id} style={styles.taskRow}>
-              <TouchableOpacity 
-                style={styles.checkboxWrapper}
-                onPress={() => toggleTask(task.id)}
-              >
-                <View style={[
-                  styles.checkbox,
-                  task.completed ? styles.checkboxChecked : styles.checkboxUnchecked
-                ]}>
-                  {task.completed && (
-                    <MaterialIcons name="check" size={18} color="#FFFFFF" />
-                  )}
-                </View>
-              </TouchableOpacity>
-              <Text style={[
-                styles.taskText,
-                task.completed && styles.taskTextCompleted
-              ]}>
-                {task.text}
-              </Text>
-            </View>
-          ))}
-        </ScrollView>
-      </View>
+      {/* LISTA */}
+      <FlatList
+        data={tasks}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={{ paddingBottom: 120 }}
+        renderItem={({ item }) => (
+          <TaskCard
+            title={item.title}
+            description={item.description}
+            date={item.date}
+            priority={item.priority}
+            done={item.done}
+            onToggle={() => console.log('toggle', item.id)}
+          />
+        )}
+      />
 
-      {/* Barra de Navegação */}
-      <View style={styles.navBar}>
-        <TouchableOpacity style={styles.navButton}>
-          <Text style={styles.navText}>Início</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.navButton}>
-          <Text style={styles.navText}>Perfil</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.navButton}>
-          <Text style={styles.navText}>Config</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+      {/* FAB */}
+      <TouchableOpacity style={styles.fab}>
+        <Text style={styles.fabText}>＋</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  header: {
+    backgroundColor: '#F9FAFB',
+    paddingHorizontal: 16,
     paddingTop: 60,
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-    backgroundColor: '#FFFFFF',
   },
-  time: {
-    fontSize: 48,
+
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+
+  greeting: {
+    fontSize: 24,
     fontWeight: '700',
-    color: '#000000',
-    marginBottom: 5,
+    color: '#111827',
   },
-  title: {
-    fontSize: 28,
-    fontWeight: '600',
-    color: '#000000',
-  },
-  tasksSection: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  tasksList: {
-    paddingHorizontal: 20,
-  },
-  taskRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-  },
-  checkboxWrapper: {
-    marginRight: 15,
-  },
-  checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-  },
-  checkboxUnchecked: {
-    borderColor: '#CCCCCC',
-    backgroundColor: 'transparent',
-  },
-  checkboxChecked: {
-    borderColor: '#007AFF', // AZUL do iOS
-    backgroundColor: '#007AFF', // AZUL do iOS
-  },
-  taskText: {
-    fontSize: 17,
-    color: '#000000',
-    flex: 1,
-  },
-  taskTextCompleted: {
-    textDecorationLine: 'line-through',
-    color: '#666666',
-  },
-  navBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: '#007AFF', // AZUL igual do iOS
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
-  },
-  navButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  navText: {
+
+  date: {
     fontSize: 14,
-    color: '#FFFFFF',
-    fontWeight: '500',
+    color: '#6B7280',
+    marginTop: 4,
+    textTransform: 'capitalize',
+  },
+
+  logout: {
+    fontSize: 14,
+    color: '#EF4444',
+    fontWeight: '600',
+  },
+
+  fab: {
+    position: 'absolute',
+    right: 24,
+    bottom: 32,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#4F46E5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+
+  fabText: {
+    fontSize: 32,
+    color: '#FFF',
+    lineHeight: 32,
   },
 });
