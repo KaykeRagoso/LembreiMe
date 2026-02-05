@@ -5,28 +5,30 @@ import { StatusBar } from 'expo-status-bar';
 export default function RootLayout() {
   return (
     <>
-      <StatusBar style="dark" />
-      <Stack>
-        <Stack.Screen 
-          name="index" 
-          options={{ 
-            headerShown: false,
-            title: 'Minhas Tarefas'
-          }} 
-        />
+      <StatusBar style="dark"/>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          animation: 'slide_from_right',
+        }}
+      >
+        {/* Tela inicial - lista de tarefas */}
+        <Stack.Screen name="index" />
+        
+        {/* Tela de criar tarefa */}
         <Stack.Screen 
           name="create" 
-          options={{ 
-            headerShown: false,
-            presentation: 'modal'
-          }} 
+          options={{
+            animation: 'slide_from_bottom',
+          }}
         />
+        
+        {/* Tela de editar tarefa (parâmetro dinâmico) */}
         <Stack.Screen 
           name="edit/[id]" 
-          options={{ 
-            headerShown: false,
-            presentation: 'modal'
-          }} 
+          options={{
+            animation: 'slide_from_bottom',
+          }}
         />
       </Stack>
     </>
