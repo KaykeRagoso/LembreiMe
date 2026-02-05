@@ -2,8 +2,8 @@ import { router } from 'expo-router';
 import { signOut } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import TaskCard from '../src/components/TaskCard';
-import { auth } from '../src/services/firebase';
+import TaskCard from '../../src/components/TaskCard';
+import { auth } from '../../src/services/auth/firebase';
 
 interface Task {
   id: string;

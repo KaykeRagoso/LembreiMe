@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Alert, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { authStyles as styles } from '../src/styles/styles';
+import { authStyles as styles } from '../src/styles/global';
 
 export default function Onboarding() {
   const [step, setStep] = useState(0);

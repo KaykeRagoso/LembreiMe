@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { auth } from '../src/services/firebase';
+import { auth } from '../../src/services/auth/firebase';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
