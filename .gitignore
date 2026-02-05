@@ -1,4 +1,3 @@
-# .gitignore
 # Dependências
 node_modules/
 .expo/
@@ -46,6 +45,12 @@ ios/build/
 ios/*.xcworkspace/
 ios/*.xcodeproj/
 xcuserdata/
+
+# Firebase
+firebase-debug.log
+.firebase/
+.firebaserc
+**/serviceAccountKey.json
 
 # Testes
 coverage/
